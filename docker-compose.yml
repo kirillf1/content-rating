@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  ratingservice:
+    image: ${DOCKER_REGISTRY-}ratingservice
+    build:
+      context: .
+      dockerfile: src/Services/RatingService/Dockerfile
+
+  web.client:
+    image: ${DOCKER_REGISTRY-}webclient
+    build:
+      context: .
+      dockerfile: src/Web/Client/Dockerfile
+
+
+  web.server:
+    image: ${DOCKER_REGISTRY-}webserver
+    build:
+      context: .
+      dockerfile: src/Web/Server/Dockerfile
+
