@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["src/Services/RatingService/RatingService.csproj", "src/Services/RatingService/"]
-RUN dotnet restore "src/Services/RatingService/RatingService.csproj"
+COPY ["src/Services/Rating/Rating.Hub/Rating.Hub.csproj", "src/Services/Rating/Rating.Hub/"]
+RUN dotnet restore "src/Services/Rating/Rating.Hub/Rating.Hub.csproj"
 COPY . .
-WORKDIR "/src/src/Services/RatingService"
-RUN dotnet build "RatingService.csproj" -c Release -o /app/build
+WORKDIR "/src/src/Services/Rating/Rating.Hub"
+RUN dotnet build "Rating.Hub.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "RatingService.csproj" -c Release -o /app/publish
+RUN dotnet publish "Rating.Hub.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "RatingService.dll"]
+ENTRYPOINT ["dotnet", "Rating.Hub.dll"]
