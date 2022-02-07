@@ -8,13 +8,17 @@ namespace Rating.Domain
 {
     public class User
     {
-        public User(string connectionId, string name)
+        public User(string name,string password,string email)
         {
-            ConnectionId = connectionId;
             Name = name;
+            Password = password;
+            Email = email;
+            Rooms = new List<Room>();
         }
-        public Guid Id { get; set; }
+        public ICollection<Room> Rooms { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
-        public string ConnectionId { get; private set; }
+        public string Password { get; set; }
+        public string Email { get; set; }
     }
 }
