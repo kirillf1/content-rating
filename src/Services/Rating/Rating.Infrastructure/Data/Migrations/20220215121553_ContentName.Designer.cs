@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Rating.Infrastructure.Data;
@@ -11,9 +12,10 @@ using Rating.Infrastructure.Data;
 namespace Rating.Infrastructure.Migrations
 {
     [DbContext(typeof(RatingDbContext))]
-    partial class RatingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220215121553_ContentName")]
+    partial class ContentName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,10 +61,7 @@ namespace Rating.Infrastructure.Migrations
                     b.Property<int>("CreatorId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsPrivate")
+                    b.Property<bool>("IsComplited")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsSingleRoom")

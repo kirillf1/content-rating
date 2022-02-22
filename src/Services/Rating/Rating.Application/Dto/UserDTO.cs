@@ -15,14 +15,12 @@ namespace Rating.Application.Dto
             Id = user.Id;
             Email = user.Email;
         }
-        public UserDTO(int id, string name, string email)
+        public UserDTO()
         {
-            Id = id; 
-            Name = name;
-            Email = email;
+
         }
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
         public int Id { get; set; }
-        public string Email { get; set; }
+        public string? Email { get; set; } = default!;
     }
 }
