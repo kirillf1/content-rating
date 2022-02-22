@@ -1,0 +1,16 @@
+﻿@page "/logout"
+@inject UserService userService
+@inject NavigationManager navigationManager
+@inject ApiAuthenticationStateProvider AuthProvider
+<div class="spinner-border" role="status">
+  <span class="sr-only">Выход...</span>
+</div>
+@code 
+{
+    protected override async Task OnInitializedAsync()
+    {
+        await userService.LogOut();
+        AuthProvider.NotifyAuthenticationStateChanged();
+        navigationManager.NavigateTo(navigationManager.BaseUri);
+    }
+}

@@ -1,17 +1,33 @@
 ﻿@inherits LayoutComponentBase
-
+@inject State state
+@inject UserService userService
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+    
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        <div class="content pb-5">
+            
+            <NavigationMenu></NavigationMenu>
+         
         </div>
 
-        <article class="content px-4">
+        <article class="content px-5">
             @Body
         </article>
     </main>
 </div>
+@code
+{
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //var user = await userService.TryAuthorize();
+            //if(user == null)
+            //{
+            //    user = await userService.Login("kirill", "12345");
+            //    state.User = user;
+            //}
+        }
+    }
+}

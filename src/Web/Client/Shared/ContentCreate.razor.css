@@ -1,0 +1,4 @@
+﻿embed-responsive, .embed-responsive iframe, .embed-responsive-16by9, .embed-responsive-item {
+    max-width: 800px;
+    max-height: 450px;
+}

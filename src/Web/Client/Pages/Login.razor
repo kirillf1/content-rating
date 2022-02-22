@@ -1,0 +1,18 @@
+﻿@page "/login"
+<h1 class="mt-1 mb-2">Вход</h1>
+<EditForm Model="@User" OnValidSubmit="@HandleValidSubmit">
+    <InputWatcher FieldChanged="@FieldChanged" @ref="@inputWatcher"/>
+    <DataAnnotationsValidator />
+    <fieldset class="container pt-5">
+     <label class="py-2" placeholder="Name" for="name">Name:</label>
+     <InputText placeholder="Name" class="form-control col-6"
+      @bind-Value="@User.Name" />
+       <ValidationMessage For="@(() => User.Name)" />
+    <label class="py-2" for="password">Password:</label>
+    <InputText type="password" placeholder="Password" class="form-control col-6"
+    @bind-Value="@User.Password" />
+     <ValidationMessage For="@(() => User.Password)" />
+ 
+    <button disabled="@isInvalid" class="@ButtonClass">Вход</button>
+      </fieldset>
+</EditForm>
