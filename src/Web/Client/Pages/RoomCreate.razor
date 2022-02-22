@@ -1,0 +1,68 @@
+﻿@page "/createroom"
+@page "/createroom/{id}"
+@using Microsoft.AspNetCore.Components.Authorization
+<AuthorizeView Context="Auth">
+ <Authorized>
+    @if (IsLoading)
+        {
+            <div class="d-flex justify-content-center">
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+            </div>
+        }
+        else{
+            <h1 class="mt-1 mb-2">@RoomHeader</h1>
+            <EditForm  Model="@Room">
+         <InputWatcher FieldChanged="@FieldChanged" @ref="@inputWatcher"/>
+         <ObjectGraphDataAnnotationsValidator/>
+         <fieldset  class="container pt-5">
+             <div class="d-flex align-content-between">
+             <label class="py-2" for="Name">Название комнаты:</label>
+              <InputText @bind-Value="Room.Name" placeholder="Название комнаты"></InputText>
+              <label>Завершенная комната:</label>
+              <InputCheckbox @bind-Value="@Room.IsCompleted"></InputCheckbox>
+               <label>Приватная комната:</label>
+              <InputCheckbox @bind-Value="@Room.IsPrivate"></InputCheckbox>
+              </div>
+
+             <h1>Одиночная игра</h1>
+             <InputCheckbox @bind-Value="@Room.IsSingleRoom"></InputCheckbox>
+             @if (Room.IsSingleRoom)
+                {
+                    <p>Добавить игрока для оценки</p>
+                    <button type="button" @onclick="@AddUser">Добавить</button>
+                    @foreach(User user in Room.Users)
+                    {
+                        <div class="input-group">
+                         <label class="py-2" for="Name">Имя пользователя:</label>
+                            <InputText @bind-Value="user.Name" placeholder="Введите имя" class="form-control"></InputText>
+                            <div class="input-group-append">
+                              <button @onclick="()=>RemoveUser(user)" class="btn btn-default btn-outline-secondary" >
+                               <span class="oi oi-minus" aria-hidden="true"></span>
+                              </button>
+                            </div>
+                        </div>
+                    }
+                }
+                <div class="justify-content-start sticky-top">
+                <h1>Добавить контент</h1>
+                <button type="button"  @onclick="AddContent" class="btn btn-default btn-outline-secondary sticky-top" >
+                  <span class="oi oi-plus" aria-hidden="true"></span></button>
+                </div>
+                    <div class="px-5">
+                @foreach(Content content in Room.Contents)
+                {
+                    <div class="py-2 form-group">
+                    <ContentCreate ContentRemoved="RemoveContent" Content="content"></ContentCreate>
+                    </div>
+                }
+                    </div>
+            </fieldset>
+                <div class="d-flex justify-content-center py-2">
+                    <button @onclick="@HandleValidSubmit" type="submit" disabled="@isInvalid" class="btn-lg">Создать комнату</button>
+                </div>
+    </EditForm>
+    }
+ </Authorized>
+</AuthorizeView>

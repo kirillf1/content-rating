@@ -1,24 +1,26 @@
 version: '3.4'
 
 services:
-  
-
-  web.client:
-    image: ${DOCKER_REGISTRY-}webclient
-    build:
-      context: .
-      dockerfile: src/Web/Client/Dockerfile
-
-
   web.server:
     image: ${DOCKER_REGISTRY-}webserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80;https://+:443
+    ports:
+     - "5203:80"
+     - "5253:443"
     build:
       context: .
       dockerfile: src/Web/Server/Dockerfile
-
-
   rating.hub:
     image: ${DOCKER_REGISTRY-}ratinghub
+    environment:
+       - ASPNETCORE_ENVIRONMENT=Development
+       - ASPNETCORE_URLS=http://+:80;https://+:443
+       - USER_SECRETS_ID=9d5f7aab-214c-4d6c-914b-3f27fdbe2a7a
+    ports:
+     - "5204:80"
+     - "5254:443"
     build:
       context: .
       dockerfile: src/Services/Rating/Rating.Hub/Dockerfile

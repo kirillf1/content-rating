@@ -1,0 +1,20 @@
+﻿
+<div class="container-fluid">
+<div class="row">
+    <div class="col-md-auto">
+        <p>Название команты: @Room.Name</p>
+        <p>Дата создания: @Room.CreationTime</p>
+        <p>Состояние: @RoomState</p>
+    </div>
+    <div class="justify-content-start col-md-auto ">
+        <div class="btn-group">
+            @if (CanEdit)
+                {
+                    <button @onclick="@OnUpdateRoom"><span class="oi oi-pencil" aria-hidden="true"></span></button>
+                    <button @onclick="@OnDeleteRoom"><span class="oi oi-minus" aria-hidden="true"></span></button>
+                }
+              <button @onclick="OnJoinRoom">Войти</button>
+        </div>
+    </div>
+</div>
+</div>

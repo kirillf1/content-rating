@@ -1,0 +1,21 @@
+﻿<div class="input-group">
+     <label class="px-2" for="Name">Название</label>
+ <InputText @bind-Value="Content.Name" placeholder="Введите имя" class="form-control"></InputText>
+  <label class="px-2" for="Name">Ссылка:</label>
+ <InputText @bind-Value="Content.Url" placeholder="Введите ссылку" class="form-control"></InputText>
+ <div class="input-group-append">
+   <button @onclick="()=>ContentRemoved.InvokeAsync(Content)" class="btn btn-default btn-outline-secondary" >
+    <span class="oi oi-minus" aria-hidden="true"></span>
+   </button>
+   <button @onclick="OpenContent" class="btn btn-default btn-outline-secondary" >
+    <span class="oi oi-eye" aria-hidden="true"></span>
+   </button>
+    </div>
+ </div>
+ @if (IsContentOpened)
+{
+
+    <div class="embed-responsive py-3 d-flex justify-content-center embed-responsive-16by9">
+    <iframe src="@Content.Url" class="embed-responsive-item" allowfullscreen></iframe>
+    </div>
+}

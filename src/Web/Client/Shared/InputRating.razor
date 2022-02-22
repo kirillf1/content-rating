@@ -1,0 +1,31 @@
+﻿@using Web.Shared.Rating
+
+
+    <div class="">
+     <label for="Rating" class="sr-only mr-2 ">Оценка @UserWithRating.User.Name</label>
+     <input type="number" @onfocusout="@RatingChange"  class="form-control mr-2 " @bind="@Rating"   disabled="@(!UserWithRating.CanEstimate)" />
+   </div>
+   
+
+@code {
+    [Parameter]
+    public long ContentId { get; set; }
+    [Parameter]
+    public UserAndRating UserWithRating { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<ContentWithRating> Estimated { get; set; }
+    private double oldRating;
+    private double Rating { get => UserWithRating.Rating;  set {  UserWithRating.Rating = value; } }
+    protected override void OnParametersSet()
+    {
+        oldRating = Rating;
+    }
+    private async void RatingChange(FocusEventArgs changeEventArgs)
+    {
+        if(Rating!=oldRating)
+        await  Estimated.InvokeAsync(new ContentWithRating { ContentId = ContentId, Rating = Rating, UserId = UserWithRating.UserId });
+        
+    }
+
+}

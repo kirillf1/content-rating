@@ -8,6 +8,9 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["src/Services/Rating/Rating.Hub/Rating.Hub.csproj", "src/Services/Rating/Rating.Hub/"]
+COPY ["src/Services/Rating/Rating.Application/Rating.Application.csproj", "src/Services/Rating/Rating.Application/"]
+COPY ["src/Services/Rating/Rating.Domain/Rating.Domain.csproj", "src/Services/Rating/Rating.Domain/"]
+COPY ["src/Services/Rating/Rating.Infrastructure/Rating.Infrastructure.csproj", "src/Services/Rating/Rating.Infrastructure/"]
 RUN dotnet restore "src/Services/Rating/Rating.Hub/Rating.Hub.csproj"
 COPY . .
 WORKDIR "/src/src/Services/Rating/Rating.Hub"

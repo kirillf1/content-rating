@@ -1,11 +1,34 @@
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.JSInterop;
 using Web.Client;
+using Web.Client.Http;
+using Web.Shared;
+using Web.Shared.Authentication;
+using Web.Shared.Rooms;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddTransient<UserService>(s => 
+{ 
+    var client = s.GetRequiredService<IHttpClientFactory>().CreateClient("api");
+    return new UserService(client);
+});
+builder.Services.AddTransient<RoomService>(s =>
+{
+    var client = s.GetRequiredService<IHttpClientFactory>().CreateClient("api");
+    return new RoomService(client);
+});
+var configuration = builder.Configuration;
+builder.Services.AddHttpClient("api", s => { s.BaseAddress = new Uri(configuration.GetSection("ApiAddress").Value); } ).AddHttpMessageHandler<CookieHttpClientHandler>();
+builder.Services.AddTransient<CookieHttpClientHandler>();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddSingleton<ApiAuthenticationStateProvider>();
+builder.Services.AddSingleton<AuthenticationStateProvider>(provider => provider.GetRequiredService<ApiAuthenticationStateProvider>());
+builder.Services.AddScoped<RatingClientHub>(s => { return new RatingClientHub(configuration.GetSection("RoomRatingHub").Value); });
+builder.Services.AddScoped<RoomListClientHub>(s => { return new RoomListClientHub(configuration.GetSection("RoomListHub").Value); });
+builder.Services.AddSingleton<State>();
 
 await builder.Build().RunAsync();

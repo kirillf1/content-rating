@@ -1,0 +1,21 @@
+﻿@page "/register"
+<h1 class="mt-1 mb-2">Регистрация</h1>
+<EditForm Model="@User" OnValidSubmit="@HandleValidSubmit">
+    <InputWatcher FieldChanged="@FieldChanged" @ref="@inputWatcher"/>
+    <DataAnnotationsValidator />
+    <fieldset class="container pt-5">
+     <label class="py-2" placeholder="Name" for="name">Name:</label>
+     <InputText placeholder="Name" class="form-control col-6"
+      @bind-Value="@User.Name" />
+       <ValidationMessage For="@(() => User.Name)" />
+    <label class="py-2" for="email">Email:</label>
+    <InputText  placeholder="Email" class="form-control col-6" @bind-Value="@User.Email" />
+     <ValidationMessage For="@(() => User.Email)" />
+    <label class="py-2" for="password">Password:</label>
+    <InputText type="password" placeholder="Password" class="form-control col-6"
+    @bind-Value="@User.Password" />
+     <ValidationMessage For="@(() => User.Password)" />
+ 
+    <button disabled="@isInvalid" class="@ButtonClass">Регистрация</button>
+      </fieldset>
+</EditForm>

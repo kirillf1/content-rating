@@ -1,0 +1,10 @@
+﻿
+@if (contentWithPos != null) {
+    @foreach (var contentRating in contentWithPos)
+    {
+       
+        <ContentEstimate Content=contentRating.content.Key RatedContent=contentRating.content.Value 
+        @bind-Users=Users Estimated="ContentEstimated" ContentNumber=contentRating.pos></ContentEstimate>
+        
+    }
+}

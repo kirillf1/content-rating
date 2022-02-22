@@ -1,12 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿
 <Project ToolsVersion="15.0" Sdk="Microsoft.Docker.Sdk">
   <PropertyGroup Label="Globals">
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
-    <ProjectGuid>4f328f10-eca8-4e19-bb94-fa3d2a77702a</ProjectGuid>
+    <ProjectGuid>54ff26f1-f6cc-4c99-8f04-626f357d94eb</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
-    <DockerServiceName>ratingservice</DockerServiceName>
+    <DockerServiceName>web.server</DockerServiceName>
+    <UserSecretsId>3d881112-4f92-4002-96a8-8ff2606ab297</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">

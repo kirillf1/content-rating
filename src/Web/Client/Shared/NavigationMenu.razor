@@ -1,0 +1,66 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject State state
+
+<nav  class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+  <div class="container-fluid">
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+        <div class="nav-item px-3 ">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+      <AuthorizeView>
+    <Authorized>
+        <span class="text-white">Привет, @context!.User!.Identity!.Name</span>
+    <div class="navbar-collapse @NavMenuCssClass justify-content-end">
+         <NavLink class="nav-link" href="logout">
+               Выйти
+            </NavLink>
+      
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="createroom">
+                <span class="oi oi-plus" aria-hidden="true"></span> Создать комнату
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="RoomList">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Ваши топы
+            </NavLink>
+        </div>
+      
+    </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="navbar-collapse @NavMenuCssClass justify-content-end">
+        <NavLink class="nav-link" href="Register">Register</NavLink>
+        <NavLink class="nav-link" href="Login">Log in</NavLink>
+        </div>
+    </NotAuthorized>
+    </AuthorizeView>
+  </div>
+</nav>
+
+@code {
+    User? User;
+    public string RoomsUrl { get; set; } = "rooms/";
+    protected override void OnInitialized()
+    {
+        state.UserChanged += UserChanged;
+    }
+    private  void UserChanged(User? user)
+    {
+        User = user;
+        RoomsUrl = "rooms/" +user?.Id;
+        this.StateHasChanged();
+    } 
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

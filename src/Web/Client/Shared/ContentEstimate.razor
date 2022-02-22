@@ -1,0 +1,35 @@
+﻿<div class="py-4">
+    <div class="row row-cols-auto">
+
+    @if (!ContentHidden)
+            {
+<div class="col-sm-4 video-container">
+               
+            <iframe  class="py-4 responsive-iframe"  allowfullscreen src="@Content.Url"></iframe>
+                
+</div>
+            }
+<div class="col justify-content-start">
+    <button @onclick="()=> ContentHidden =!ContentHidden" class="btn btn-default btn-outline-secondary" >
+    <span class="oi oi-eye" aria-hidden="true"></span>
+   </button>
+</div>
+<div class="col ">
+    <span>№@ContentNumber</span>
+            @if (Content.Name != null)
+            {
+                <p><i>Название:@Content.Name</i></p>
+            }
+    <p><strong>Средняя оценка: @AvarageRating</strong></p>
+</div>
+   </div>
+
+    @* <div class="row">*@
+@foreach(var rating in UserAndRatings)
+{
+    <div class="d-inline-flex p-2 bd-highlight">
+    <InputRating  ContentId ="Content.Id" UserWithRating="rating" Estimated ="Estimated"  ></InputRating>
+    </div>
+}
+   @* </div>*@
+</div>

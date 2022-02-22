@@ -1,0 +1,15 @@
+﻿@page "/ResultRoom/{id}"
+<div class="container">
+@if (Room != null)
+{
+    @if (Content.Count > 0)
+    {
+        <ContentList Users=@Room.Users Content=Content></ContentList>
+
+    }
+    else
+    {
+         <h1>Идет загрузка оценок</h1>
+    }
+}
+</div>
