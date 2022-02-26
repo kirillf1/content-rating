@@ -14,4 +14,3 @@ At the moment, the entire visual part is made schematically and ugly. Since I do
 Since I am from Russia and actively use it with friends, unfortunately all the text in html is in Russian.
 Through the visual part, you can create rooms for estimate, you can view already rated rooms, etc. You must register to create and rate.
 
-So far, to run locally, you need to run two projects separately and Web.Client/wwwroot/appsettings.json add the addresses that the client part will access
