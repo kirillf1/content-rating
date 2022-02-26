@@ -22,13 +22,13 @@ builder.Services.AddTransient<RoomService>(s =>
     return new RoomService(client);
 });
 var configuration = builder.Configuration;
-builder.Services.AddHttpClient("api", s => { s.BaseAddress = new Uri(configuration.GetSection("ApiAddress").Value); } ).AddHttpMessageHandler<CookieHttpClientHandler>();
+builder.Services.AddHttpClient("api", s => { s.BaseAddress = new Uri(configuration.GetSection("Urls").GetSection("ApiAddress").Value); } ).AddHttpMessageHandler<CookieHttpClientHandler>();
 builder.Services.AddTransient<CookieHttpClientHandler>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddSingleton<ApiAuthenticationStateProvider>();
 builder.Services.AddSingleton<AuthenticationStateProvider>(provider => provider.GetRequiredService<ApiAuthenticationStateProvider>());
-builder.Services.AddScoped<RatingClientHub>(s => { return new RatingClientHub(configuration.GetSection("RoomRatingHub").Value); });
-builder.Services.AddScoped<RoomListClientHub>(s => { return new RoomListClientHub(configuration.GetSection("RoomListHub").Value); });
+builder.Services.AddScoped<RatingClientHub>(s => { return new RatingClientHub(configuration.GetSection("Urls").GetSection("RoomRatingHub").Value); });
+builder.Services.AddScoped<RoomListClientHub>(s => { return new RoomListClientHub(configuration.GetSection("Urls").GetSection("RoomListHub").Value); });
 builder.Services.AddSingleton<State>();
 
 await builder.Build().RunAsync();

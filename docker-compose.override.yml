@@ -1,23 +1,39 @@
 version: '3.4'
 
+networks:
+  rating-dev:
+     driver: bridge
 services:
   web.server:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_URLS=http://+:80;https://+:443
     ports:
-      - "80"
-      - "443"
+     - "5203:80"
+     - "5253:443"
     volumes:
-
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
   rating.hub:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_URLS=http://+:80;https://+:443
+      - ConnectionStrings__PostgresConnectionString=username=postgres;Password=12345678;Server=postgres_image;Port=5432;Database=postgres;Integrated Security=true;Pooling=true
     ports:
-      - "80"
-      - "443"
+     - "5204:80"
+     - "5254:443"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    networks:
+       - rating-dev
+  postgres_image:
+     image: postgres:latest
+     ports:
+     - "5432:5432"
+     environment:
+       - POSTGRES_PASSWORD:"12345678"
+       - POSTGRES_HOST_AUTH_METHOD=trust
+     restart: always
+     networks:
+       - rating-dev
+
