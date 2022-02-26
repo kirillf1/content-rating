@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using Rating.Application;
 using Rating.Hub.Hubs;
 using Rating.Infrastructure;
+using Rating.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddConsole();
@@ -26,7 +28,7 @@ builder.Services.AddApplication();
 
 
 var app = builder.Build();
-
+await EnsureDbAsync(app.Services);
 if (app.Environment.IsDevelopment())
 {
 
@@ -39,3 +41,9 @@ app.MapHub<RoomHub>("/room");
 app.MapHub<RoomListHub>("/roomList");
 app.MapControllers();
 app.Run();
+
+static async Task EnsureDbAsync(IServiceProvider sp)
+{
+    await using var db = sp.CreateScope().ServiceProvider.GetRequiredService<RatingDbContext>();
+    await db.Database.MigrateAsync();
+}

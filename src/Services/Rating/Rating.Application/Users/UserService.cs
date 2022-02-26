@@ -27,7 +27,7 @@ namespace Rating.Application.Users
         public async Task<bool> DeleteUser(string username, string password)
         {
             var user = await ratingDbContext.Users.FirstOrDefaultAsync(u => u.Name == username);
-            if (user == null && passwordHasher.Check(user!.Password, password).Verified)
+            if (user == null || !passwordHasher.Check(user!.Password, password).Verified)
                 return false;
             ratingDbContext.Users.Remove(user);
             await ratingDbContext.SaveChangesAsync(default);
@@ -71,9 +71,9 @@ namespace Rating.Application.Users
 
         public async Task<UserDTO?> GetUser(string username, string password)
         {
-            password = passwordHasher.Hash(password);
+            
             var user = await ratingDbContext.Users.FirstOrDefaultAsync(u => u.Name == username);
-            if (user == null && passwordHasher.Check(user!.Password,password).Verified)
+            if (user == null || !passwordHasher.Check(user!.Password,password).Verified)
                 return default;
             return new UserDTO(user);
         }
