@@ -11,6 +11,6 @@ The application project implements the basic commands and queries necessary for 
 
 The second part is Blazor app. Link: https://github.com/kirillf1/content-rating/tree/master/src/Web
 At the moment, the entire visual part is made schematically and ugly. Since I don't have sufficient knowledge in the frontend. But I will try to solve this problem in the near future.
-Since I am from Russia and actively use it with friends, unfortunately all the text in html is in Russian.
+Unfortunately all the text in html is in Russian.
 Through the visual part, you can create rooms for estimate, you can view already rated rooms, etc. You must register to create and rate.
 
