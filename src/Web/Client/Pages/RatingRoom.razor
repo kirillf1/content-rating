@@ -12,6 +12,7 @@
            @if(MenuOpened)
            {
                <div class="d-flex flex-column">
+                   <button @onclick="ShowProgress">Промежуточные итоги</button>
                 @if(Room.CreatorId == State.User!.Id)
                 {
                     <i class="pb-2">Выгнать игроков:</i>

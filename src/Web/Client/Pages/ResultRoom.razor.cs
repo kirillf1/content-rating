@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Web.Shared;
 using Web.Shared.Rating;
 using Web.Shared.Rooms;
@@ -13,6 +14,8 @@ namespace Web.Client.Pages
         State State { get; set; } = default!;
         [Inject]
         RatingClientHub RatingClientHub { get; set; } = default!;
+        [Inject]
+        IJSRuntime JS { get; set; } = default!;
         Room Room { get; set; } = default!;
        
         Dictionary<Content, List<RatedContent>> Content { get; set; } = new Dictionary<Content, List<RatedContent>>();
@@ -54,6 +57,10 @@ namespace Web.Client.Pages
             RatingClientHub.RoomLoaded -= RoomChanged;
             RatingClientHub.ContentUsersLoaded -= RatingLoaded;
             await RatingClientHub.DisposeAsync();
+        }
+        private async Task Print()
+        {
+            await JS.InvokeVoidAsync("print");
         }
     }
 }

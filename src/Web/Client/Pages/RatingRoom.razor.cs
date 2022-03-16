@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Web.Shared;
 using Web.Shared.Rating;
 using Web.Shared.Rooms;
@@ -7,6 +8,8 @@ namespace Web.Client.Pages
 {
     public partial class RatingRoom
     {
+        [Inject]
+        IJSRuntime JS { get; set; } = default!;
         [Parameter]
         public string Id { get; set; } = default!;
         [Inject]
@@ -143,6 +146,11 @@ namespace Web.Client.Pages
             RatingClientHub.UsersChanged -= UsersChanged;
             await RatingClientHub.DisposeAsync();
         }
-        
+        private async Task ShowProgress()
+        {
+            var result = string.Join("\n", Content.OrderByDescending(c => c.Value.Average(c => c.Rating)).
+                Select((c, i) => $"№{i + 1} {c.Key.Name} Оценка: {Math.Round(c.Value.Average(n => n.Rating), 2)}"));
+            await JS.InvokeVoidAsync("alert", "Остальные можно посмотреть в консоли \n" + result);
+        }
     }
 }
