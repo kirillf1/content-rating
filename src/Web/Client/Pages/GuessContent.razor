@@ -1,0 +1,75 @@
+﻿@page "/guesscontent"
+@using Web.Client.Shared.ContentPlay
+@using Web.Client.Shared.TagTrees
+
+<div class="container">
+   
+           
+      @if(Tags.Count > 0)
+        {
+  <div class="row py-5">
+      <div class="col">
+          <TagTreeList Tags="Tags" TagSelected="TagSelected"></TagTreeList>
+        </div>
+      <div class="col">
+          <p>Выбранные теги:</p>
+          <span>
+          @string.Join(",",Tags.Where(t=>SelectedTags.Contains(t.Id)).Select(c=>c.Name))
+        
+          </span>
+      </div>
+    </div>
+       }
+    <div class="py-3">
+        <span>Правильных ответов:@CorrectAnswer</span>
+        <span>Серия угадываний: @CorrectAsnwerStreak</span>
+        <span>Количество ошибок: @IncorrectAnswer</span>
+        <span>Всего ответов: @AnswerCount</span>
+        <p>Время на угадывание</p>
+        <select @bind="@contentStopSeconds">
+            <option selected value="60">1 минута</option>
+            <option value="30">30 секунд</option>
+            <option value="10">10 секунд</option>
+            <option value="5">5 секунд</option>
+            <option value="3">3 секунды</option>
+        </select>
+    </div>
+    <button  @onclick="GetContent">След</button>
+    @if (CurrentContentGuess != null)
+    {
+            
+        @if (Answers != null && !isAnswered)
+        {
+            <p>Выберете правильный ответ:</p>
+            <table class="pb-5 table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">№</th>
+                   <th scope="col">Вариант ответа</th>
+               </tr>
+               </thead>
+               <tbody>
+            @foreach(var answerWithNumber in Answers.Select((a,n)=> new {answer =a, number =n} ))
+            {
+                <tr>
+                  <td @onclick="()=>CheckAnswer(answerWithNumber.answer)" scope="row">@(answerWithNumber.number+1)</td>
+                  
+                 <td @onclick="()=>CheckAnswer(answerWithNumber.answer)"  scope="row">@answerWithNumber.answer</td>
+               </tr>
+               
+               
+            }
+            </tbody>
+            </table>
+        }
+        @switch (CurrentContentGuess.Content.ContentType)
+        {
+            case "YoutubeVideo":
+                <YoutubePlay ContentLoaded="startTimer" PlayerStoped="StopPlay" IsAnswered="isAnswered" CurrentContentGuess="CurrentContentGuess" @ref="ContentPlay"></YoutubePlay>
+                break;
+            case "Audio":
+                <AudioPlay ContentLoaded="startTimer" IsAnswered="isAnswered"  @ref="ContentPlay"></AudioPlay>
+                break;
+        }
+    }
+</div>

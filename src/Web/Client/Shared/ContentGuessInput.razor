@@ -1,0 +1,116 @@
+﻿@using Web.Client.Shared.TagTrees
+@using Web.Shared.GuessContent
+<div class="border-bottom">
+<EditForm Model=Content>
+<div class="input-group">
+     <label class="px-2" for="Name">Название</label>
+ <InputText @bind-Value="@Content.Name" placeholder="Введите имя" class="form-control"/>
+ <label>Время запуска</label>
+ <InputNumber @bind-Value="Content.ContentStartSeconds"></InputNumber>
+  </div>
+  <label class="px-2" for="Name">Ссылка:</label>
+ <InputText @bind-Value="Content.Url" placeholder="Введите ссылку" class="form-control"/>
+  <div class="input-group-append">
+  <TagTreeList Tags ="@Tags" TagSelected="TagSelected"></TagTreeList>
+ <label >Выбранные теги: @string.Join(",",Tags.Where(t=>Content.TagIds!.Contains(t.Id)).Select(c=>c.Name))</label>
+ </div>
+ <div class="input-group-append">
+   <label>Выберете автора</label>
+  
+   <select class="form-select form-select-lg" data-live-search-style="startsWith" data-live-search="true" @bind="@Content.AuthorId">
+                @if (!Content.AuthorId.HasValue)
+                {
+                    <option value ="0">Выбор</option>
+                }
+                @foreach(var author in Authors)
+                {
+                    <option value="@author.Id">@author.Name</option>
+                }
+            </select>
+            <label>Выберете тип контента</label>
+   <select @bind="@Content.ContentTypeId">
+                @if (Content.ContentTypeId == 0)
+                {
+                    <option selected value ="@ContentTypes.First().Id">@ContentTypes.First().Name</option>
+                }
+                @foreach(var type in ContentTypes)
+                {
+                    <option value="@type.Id">@type.Name</option>
+                }
+            </select>
+    </div>
+   <button @onclick="()=>ContentRemoved.InvokeAsync(Content)" class="btn btn-default btn-outline-secondary" >
+    <span class="oi oi-minus" aria-hidden="true"></span>
+   </button>
+   <button @onclick="OpenContent" class="btn btn-default btn-outline-secondary" >
+    <span class="oi oi-eye" aria-hidden="true"></span>
+   </button>
+   
+ </EditForm>
+ </div>
+ @if (IsContentOpened)
+{
+
+    <div class="embed-responsive py-3 d-flex justify-content-center embed-responsive-16by9">
+    <iframe src="@Content.Url" class="embed-responsive-item" allowfullscreen></iframe>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public ContentGuessEdit Content { get; set; } = default!;
+    [Parameter]
+    public EventCallback<ContentGuessEdit> ContentRemoved { get; set; }
+    [Parameter]
+    public List<Tag> Tags{ get; set; } = new List<Tag>();
+    [Parameter]
+    public List<Author> Authors { get; set; } = new();
+    [Parameter]
+    public List<ContentType> ContentTypes { get; set; } = new();
+    private bool IsContentOpened { get; set; } = false;
+    public void OpenContent()
+    {
+        IsContentOpened  = !IsContentOpened;
+    }
+    private void TagSelected(TagTree tag)
+    {
+        if (Content.TagIds!.Contains(tag.Tag.Id))
+        {
+            Content.TagIds.RemoveAll(t=>FindTagsDown(tag).Contains(t));
+        }
+        else
+        {
+            Content.TagIds.AddRange(FindTagsUp(tag.Tag));
+        }
+        Content.TagIds.ForEach(c => Console.WriteLine(c));
+        StateHasChanged();
+   
+    }
+    private IEnumerable<int> FindTagsUp(Tag tag)
+    {
+        List<int> tagsIds = new List<int>();
+        tagsIds.Add(tag.Id);
+        if (tag.ParentId != null)
+        {
+            var tags = Tags.Where(t => t.Id == tag.ParentId);
+            foreach(var tagParent in tags)
+            {
+                tagsIds.AddRange(FindTagsUp(tagParent));
+            }
+        }
+        return tagsIds;
+    }
+    private IEnumerable<int> FindTagsDown(TagTree tag)
+    {
+        List<int> tagsIds = new List<int>();
+        tagsIds.Add(tag.Tag.Id);
+        if(tag.Children.Count > 0)
+        {
+            foreach(var childTag in tag.Children)
+            {
+                tagsIds.AddRange(FindTagsDown(childTag));
+            }
+        }
+        return tagsIds;
+    }
+}
