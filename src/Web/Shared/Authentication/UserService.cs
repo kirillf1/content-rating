@@ -14,13 +14,20 @@ namespace Web.Shared.Authentication
         }
         public async Task<User?> TryAuthorize()
         {
-            var res = await httpClient.GetAsync("/api/account/Authorize");
-            if (res.IsSuccessStatusCode)
+            try
             {
-                var user = JsonSerializer.Deserialize<User>(await res.Content.ReadAsStringAsync(), jsonSerializerOptions);
-                return user;
+                var res = await httpClient.GetAsync("/api/account/Authorize");
+                if (res.IsSuccessStatusCode)
+                {
+                    var user = JsonSerializer.Deserialize<User>(await res.Content.ReadAsStringAsync(), jsonSerializerOptions);
+                    return user;
+                }
+                else
+                {
+                    return default;
+                }
             }
-            else
+            catch
             {
                 return default;
             }
