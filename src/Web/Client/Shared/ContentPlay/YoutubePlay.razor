@@ -1,0 +1,18 @@
+﻿@using Web.Shared.GuessContent
+
+ <div class="d-flex  justify-content-center" style=" position: relative;padding-bottom: 56.25%;height: 0;">
+            <iframe class="youtube-video" src="@CurrentContentGuess.Content.Url"  @onload="async ()=>await ContentLoaded.InvokeAsync()"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style=" @videoStyle">
+
+            </iframe>
+            
+            <div class="py-3">
+             @if(!IsAnswered)
+             {
+            <button @onclick="PauseControl" disabled="@PlayerStoped"><span class="@PlayButtonClass" aria-hidden="true"></span></button>
+            <button @onclick="StopPlay"><span class="oi oi-media-stop"></span></button>
+             }
+             </div>
+        </div>
+
+

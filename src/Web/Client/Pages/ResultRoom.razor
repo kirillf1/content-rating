@@ -2,6 +2,7 @@
 <div class="container">
 @if (Room != null)
 {
+    <button @onclick="Print">Печать</button>
     @if (Content.Count > 0)
     {
         <ContentList Users=@Room.Users Content=Content></ContentList>

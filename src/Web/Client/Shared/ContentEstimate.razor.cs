@@ -21,7 +21,7 @@ namespace Web.Client.Shared
         [Parameter]
         public EventCallback<List<User>> UsersChanged { get; set; }
         private bool ContentHidden { get; set; } = true;
-        
+        private string ContentUrl { get; set; } = default!;
         public double AvarageRating { 
             get 
             {
@@ -34,6 +34,7 @@ namespace Web.Client.Shared
         }
         protected override void OnParametersSet()
         {
+            ContentUrl = Content.Url + "?autoplay=1";
             UserAndRatings = RatedContent.Join(Users, r => r.UserId, u => u.Id, (r, u) => new UserAndRating(u, r.Rating, r.CanEstimate)).ToList();
             
         }

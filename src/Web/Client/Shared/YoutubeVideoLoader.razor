@@ -1,0 +1,29 @@
+﻿@using Youtube.Extensions.Services
+
+<div class="container">
+    <p>Добавить контент через ютуб плейлист</p>
+    <EditForm Model="this">
+<div class="input-group">
+     <label class="px-2" for="ApiKey">Api ключ:</label>
+ <InputText @bind-Value="@ApiKey" placeholder="Введите ключ" class="form-control"/>
+  <label class="px-2" for="PlaylistId">Id плейлиста:</label>
+ <InputText @bind-Value="PlaylistId" placeholder="Введите Id" class="form-control"/>
+ <button @onclick="LoadContent">Загрузить</button>
+</div>
+ </EditForm>
+</div>
+@code {
+    [Parameter]
+    public EventCallback<IEnumerable<Video>> VideoLoaded{ get; set; }
+    [Inject]
+    private PlaylistService playlistService { get; set; } = default!;
+    private string ApiKey { get; set; } = string.Empty;
+    private string PlaylistId { get; set; } = string.Empty;
+    private bool CanLoad => (!string.IsNullOrEmpty(ApiKey) && !string.IsNullOrEmpty(PlaylistId));
+    private async Task LoadContent()
+    {
+        var videos = await playlistService.GetAllVideosFromPlaylist(PlaylistId, ApiKey);
+        if (videos != null)
+            await VideoLoaded.InvokeAsync(videos);
+    }
+}

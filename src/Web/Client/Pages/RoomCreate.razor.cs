@@ -2,6 +2,7 @@
 using Web.Shared;
 using Microsoft.AspNetCore.Components;
 using Web.Client.Shared;
+using Youtube.Extensions.Services;
 
 namespace Web.Client.Pages
 {
@@ -68,6 +69,11 @@ namespace Web.Client.Pages
             }
             IsLoading = false;
             navigationManager.NavigateTo("/RatingRoom/" + Id);
+        }
+        private void YoutubeVideoLoaded(IEnumerable<Video> videos)
+        {
+            Room.Contents.AddRange(videos.Select(v => new Content { Name = v.Name, Url = "https://www.youtube.com/embed/" + v.Id }));
+
         }
     }
 }

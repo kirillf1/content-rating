@@ -1,0 +1,138 @@
+﻿@page "/ContentGuessUpdate/{Id:long}"
+@page "/ContentGuessUpdate"
+@using Web.Shared.GuessContent
+@using Youtube.Extensions.Services
+<div class="container">
+    @if(Id == 0)
+    {
+        <YoutubeVideoLoader VideoLoaded=YoutubeVideoLoaded ></YoutubeVideoLoader>
+    }
+    
+    @if (AuthorInputOpened)
+    {
+        <label>Введите имя автора</label>
+        <input @bind-value="AuthorInputName" />
+        <button @onclick="AddAuthor">Сохранить автора</button>
+    }
+    <button class="py-3" @onclick="()=> {AuthorInputOpened = !AuthorInputOpened; AuthorInputName=string.Empty;} "> Добавить автора</button>
+    <div class="row">
+
+    <div class="col">
+        @foreach (var item in content)
+       {
+           <div class="py-5">
+           <ContentGuessInput Content="item" Tags="Tags" Authors="Authors" ContentTypes="ContentTypes" ContentRemoved="RemoveContent"></ContentGuessInput>
+           </div>
+       }
+    </div>
+    @if(Id == 0 && Tags!= null){
+    <div class="col-1 justify-content-start">
+        <button @onclick="AddContent">Добавить</button>
+        <label>Глобальный теги</label>
+        <select @onchange="GlobalTagSelected">
+                    @if (GlobalTagIds.Count == 0)
+                    {
+                        <option selected>Выбор...</option>
+                    }
+                @foreach(var tag in Tags)
+                {
+                    <option value="@tag.Id">@tag.Name</option>
+                }
+         </select>
+    </div>
+   
+    }
+</div>
+<button @onclick="Save">Сохранить</button>
+</div>
+@code {
+    [Parameter]
+    public long Id { get; set; }
+    [Inject]
+    public ContentGuessService contentService { get; set; } = default!;
+    [Inject]
+    public TagService TagService { get; set; } = default!;
+    [Inject]
+    public AuthorService AuthorService { get; set; } = default!;
+    [Inject]
+    public ContentTypeService ContentTypeService { get; set; } = default!;
+    [Inject]
+    NavigationManager navigationManager { get; set; } = default!;
+    private List<Tag> Tags { get; set; } = default!;
+    private List<int> GlobalTagIds { get; set; } = new List<int>();
+    private List<Author> Authors { get; set; } = new();
+    private List<ContentType> ContentTypes { get; set; } = new();
+    private bool AuthorInputOpened = false;
+    private string AuthorInputName { get; set; } = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id > 0)
+        {
+            var updateContent = await contentService.GetContentForUpdate(Id);
+            if (updateContent == null)
+                return;
+            content.Add(updateContent);
+        }
+
+        Tags = await TagService.GetAllTags() ?? new List<Tag>();
+        ContentTypes = await ContentTypeService.GetContentTypes();
+        Authors = await AuthorService.GetAllAuthors();
+    }
+    private void RemoveContent(ContentGuessEdit contentGuess)
+    {
+        var contentForDelete = content.FirstOrDefault(c => c.Name == contentGuess.Name);
+        content.Remove(contentForDelete);
+    }
+    private void AddContent()
+    {
+        content.Add(new ContentGuessEdit() {TagIds = GlobalTagIds});
+    }
+    private List<ContentGuessEdit> content { get; set; } = new();
+    private  async Task Save()
+    {
+        bool result = false;
+        if(Id > 0){
+            var contentForUpdate = content.FirstOrDefault();
+            if (contentForUpdate != null)
+                result = await contentService.UpdateContentGuess(contentForUpdate,Id);
+        }
+        else
+        {
+            result = await contentService.AddContentCollection(content);
+        }
+        if (result)
+            navigationManager.NavigateTo("/ContentGuessList");
+    }
+    private void GlobalTagSelected(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value!.ToString()!, out var id))
+        {
+            if (GlobalTagIds.Contains(id))
+            {
+                GlobalTagIds.Remove(id);
+            }
+            else
+            {
+                GlobalTagIds.Add(id);
+            }
+
+        }
+    }
+    private void YoutubeVideoLoaded(IEnumerable<Video> videos)
+    {
+        foreach(var video in videos)
+        {
+            content.Add(new ContentGuessEdit() { Name = video.Name ?? string.Empty, Url = "https://www.youtube.com/embed/" + video.Id, TagIds = new List<int>(GlobalTagIds) });
+        }
+
+    }
+    private async Task AddAuthor()
+    {
+
+        var author = await AuthorService.AddAuthor(AuthorInputName);
+        if (author != null)
+            Authors.Add(author);
+        AuthorInputOpened = false;
+        
+    }
+}

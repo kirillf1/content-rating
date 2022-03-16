@@ -1,0 +1,45 @@
+﻿@using Web.Shared.GuessContent
+
+<div class="dropdown">
+	<button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+		Теги
+	</button>
+	
+		<div class="dropdown-menu">
+	@foreach(var tagTree in TagTree)
+	{
+		
+	<TagItem TagTree="tagTree" TagSelected="TagSelected"></TagItem>
+				
+	}
+		</div>
+</div>
+	
+@code {
+
+	[Parameter]
+	public List<Tag> Tags { get; set; } = default!;
+	public List<TagTree> TagTree { get; set; } = default!;
+	[Parameter]
+	public EventCallback<TagTree> TagSelected { get; set; }
+	protected override void OnParametersSet()
+	{
+	        TagTree = new List<TagTree>(Tags.Where(t => t.ParentId == null).Select(t => new TagTree(t)));
+            foreach (var tagTree in TagTree)
+            {
+                tagTree.Children.AddRange(Tags.Where(c => c.ParentId == tagTree.Tag.Id).Select(c => new TagTree(c)));
+                AddTags(tagTree.Children);
+            }
+	}
+	private void AddTags(IEnumerable<TagTree> tags)
+	{  
+       foreach (var tag in tags)
+       {
+           tag.Children.AddRange(Tags.Where(c => c.ParentId == tag.Tag.Id).Select(t => new TagTree(t)));
+          if(tag.Children.Count > 0)
+             AddTags(tag.Children);
+           
+       }
+    }
+
+}

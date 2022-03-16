@@ -1,0 +1,38 @@
+﻿@using Web.Shared.GuessContent
+
+@if(TagTree.Children.Count == 0)
+{
+		<a class="dropdown-item" @onclick="SelectTag" >@TagTree.Tag.Name</a>
+		
+}
+	else
+	{
+		
+		<a class="dropdown-item submenu" disabled="true" @onclick="SelectTag">@TagTree.Tag.Name</a>
+		<div class="dropdown-menu">
+		@foreach(var child in TagTree.Children)
+		{
+			<TagItem TagTree="child" TagSelected="TagSelected" IsFirstLoop="@IsFirstLoop"></TagItem>
+			
+		}
+
+       </div>
+	}
+
+
+
+
+@code {
+
+	[Parameter]
+	public bool IsFirstLoop { get; set; }
+	[Parameter]
+	public TagTree TagTree { get; set; } = default!;
+	[Parameter]
+	public EventCallback<TagTree> TagSelected { get; set; }
+	
+    public async Task SelectTag()
+    {
+        await TagSelected.InvokeAsync(TagTree);
+    }
+}
