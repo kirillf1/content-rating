@@ -24,7 +24,7 @@ namespace ContentGuess.Application.AuthorHandlers.Decorators
         {
            if(memoryCache.TryGetValue(AUTHORS_CACHE, out List<Author> Authors))
             {
-                return Authors;
+                return Authors.OrderBy(a=>a.Name).ToList();
             }
             else
             {

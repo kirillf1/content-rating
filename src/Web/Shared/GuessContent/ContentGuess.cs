@@ -11,6 +11,7 @@ namespace Web.Shared.GuessContent
         public long Id { get; set; }
         public string Name { get; set; } = String.Empty;
         public string Url { get; set; } = String.Empty;
-        public string ContentType { get; set; } = "Video";
+        public string ContentType { get; set; } = "YoutubeVideo";
+        public double ContentStartSeconds { get; set; }
     }
 }

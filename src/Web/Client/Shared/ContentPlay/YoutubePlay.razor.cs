@@ -59,7 +59,7 @@ namespace Web.Client.Shared.ContentPlay
 
         public Task UpdateContent(ContentGuessFalseNames contentGuess)
         {
-            Console.WriteLine(contentGuess.ContentStartTime.GetValueOrDefault());
+            Console.WriteLine("update");
             contentGuess.Content.Url += $"?start={contentGuess.ContentStartTime.GetValueOrDefault()}" +
                 "&&enablejsapi=1&version=3&playerapiid=ytplayer";
             CurrentContentGuess = contentGuess;

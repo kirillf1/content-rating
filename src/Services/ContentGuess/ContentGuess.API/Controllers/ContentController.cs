@@ -17,10 +17,10 @@ namespace ContentGuess.API.Controllers
             return await requestHandler.HandleAsync(new GetContentRequest(id), default);
         }
         [HttpGet]
-        public async Task<ActionResult<List<ContentRead>>> GetContentCollection([FromQuery]int? contentCount, bool? needShuffle, int? contentType, [FromQuery] List<int>? tagId,
-            string? orderColumn, [FromServices] IRequestHandler<ContentListQuery, List<ContentRead>> requestHandler)
+        public async Task<IEnumerable<ContentInformation>> GetContentCollection([FromQuery]int? contentCount, bool? needShuffle, int? contentType, [FromQuery] List<int>? tagId,
+            string? orderColumn, [FromServices] IRequestHandler<ContentInformationRequest, IEnumerable<ContentInformation>> requestHandler)
         {
-            var request = new ContentListQuery(contentCount ?? 1000)
+            var request = new ContentInformationRequest(contentCount ?? int.MaxValue)
             {
                 TagIds = tagId?.ToList(),
                 ContentType = contentType,

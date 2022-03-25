@@ -23,9 +23,9 @@ namespace Web.Shared.GuessContent
         {
            return await httpClient.GetFromJsonAsync<ContentGuessEdit>("/api/Content/" + id);
         }
-        public async Task<List<ContentGuess>?> GetAllContent()
+        public async Task<List<ContentGuessInfo>?> GetAllContent()
         {
-            return await httpClient.GetFromJsonAsync<List<ContentGuess>>("/api/content?ordercolumn=name");
+            return await httpClient.GetFromJsonAsync<List<ContentGuessInfo>>("/api/content?ordercolumn=name");
         }
         public async Task<List<ContentGuessFalseNames>?> GetContentGuess(int count,int falseNameCount,List<int>? selectedTags = null,string? contentType = null)
         {
