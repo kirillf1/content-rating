@@ -14,6 +14,6 @@ At the moment, the entire visual part is made schematically and ugly. Since I do
 Through the visual part, you can create rooms for estimate, you can view already rated rooms, etc. You must register to create and rate. Then you can 
 Unfortunately all the text in html is in Russian.
 
-The third part is the REST API which contains the CRUD operation for the content to guess. Linq: https://github.com/kirillf1/content-rating/tree/master/src/Services/ContentGuess Content contains author title, link to content, tags and content type (currently YouTube video and audio files)
+The third part is the REST API which contains the CRUD operation for the content to guess. Link: https://github.com/kirillf1/content-rating/tree/master/src/Services/ContentGuess Content contains author title, link to content, tags and content type (currently YouTube video and audio files)
 
 
