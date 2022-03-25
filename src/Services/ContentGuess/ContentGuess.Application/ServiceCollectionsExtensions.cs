@@ -43,7 +43,8 @@ namespace ContentGuess.Application
             serviceCollection.AddScoped<IRequestHandler<ContentListForGuessQuery, List<ContentForGuess>>, GetContentListForGuessHandler>();
             serviceCollection.AddScoped<IRequestHandler<ContentListQuery, List<ContentRead>>, GetContentListQueryHandler>();
             serviceCollection.AddScoped<IRequestHandler<GetContentRequest, ContentWrite>, GetContentUpdateQueryHandler>();
-
+            serviceCollection.AddScoped<IRequestHandler<ContentInformationRequest, IEnumerable<ContentInformation>>, ContentInformationQueryHandler>();
+            
             //commands
             serviceCollection.AddScoped<IRequestHandler<AddContentRequest, List<Content>>, AddContentHandler>();
             serviceCollection.AddScoped<IRequestHandler<DeleteContentRequest, bool>, DeleteContentHandler>();

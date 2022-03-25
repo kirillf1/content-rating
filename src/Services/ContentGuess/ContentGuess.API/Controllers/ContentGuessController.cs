@@ -10,16 +10,32 @@ namespace ContentGuess.API.Controllers
     [ApiController]
     public class ContentGuessController : ControllerBase
     {
+
         [HttpGet]
-        public async Task<ActionResult<List<ContentForGuess>>> GetContentCollection(int? contentCount,int? falseNames,int? contentTypeId, [FromQuery]List<int>? tagId,
-          [FromServices] IRequestHandler<ContentListForGuessQuery, List<ContentForGuess>> requestHandler)
+        [Route("RawContent")]
+        public async Task<IEnumerable<ContentInformation>> GetContentCollection([FromQuery] int? contentCount, bool? needShuffle, int? contentType, [FromQuery] List<int>? tagId,
+            string? orderColumn, [FromServices] IRequestHandler<ContentInformationRequest, IEnumerable<ContentInformation>> requestHandler)
         {
-            Console.WriteLine("Names" + falseNames);
-            var request = new ContentListForGuessQuery(contentCount ?? 25,falseNames ?? 5)
+            var request = new ContentInformationRequest(contentCount ?? 1000)
             {
                 TagIds = tagId,
-                ContentType = contentTypeId
-               
+                ContentType = contentType,
+                NeedShuffle = needShuffle,
+                OrderColumn = orderColumn
+            };
+            return await requestHandler.HandleAsync(request, default);
+
+        }
+        [HttpGet]
+        [Route("ById")]
+        public async Task<ActionResult<List<ContentRead>>> GetContentCollection([FromQuery] string? orderColumn, [FromQuery] List<long> contentId,
+          [FromServices] IRequestHandler<ContentListQuery, List<ContentRead>> requestHandler)
+        {
+            
+            var request = new ContentListQuery(contentId)
+            {
+               OrderColumn = orderColumn
+
             };
             return await requestHandler.HandleAsync(request, default);
 

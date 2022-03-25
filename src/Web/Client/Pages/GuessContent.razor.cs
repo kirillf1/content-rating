@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.Text.RegularExpressions;
 using Web.Client.Shared.ContentPlay;
 using Web.Shared.GuessContent;
 
@@ -11,23 +12,23 @@ namespace Web.Client.Pages
         [Inject]
         IJSRuntime JS { get; set; } = default!;
         [Inject]
-        ContentGuessService ContentGuessService { get; set; } = default!;
+        GuessContentClient GuessContentClient { get; set; } = default!;
         [Inject]
         TagService TagService { get; set; } = default!;
         private int CorrectAsnwerStreak { get; set; } = 0;
         private int AnswerCount { get; set; } = 0;
         private int CorrectAnswer { get; set; }
-       
+        private bool AnswerByNumber { get; set; }
+        public string AnswerNumber { get; set; } = string.Empty;
         private int IncorrectAnswer { get; set; }
         private int contentStopSeconds { get; set; } = 60;
         private bool StopPlay { get; set; } = false;
-        
         System.Timers.Timer myTimer { get; set; } = new System.Timers.Timer();
        
         private List<Tag> Tags { get; set; } = new List<Tag>();
         List<int> SelectedTags { get; set; } = new List<int>();
         public ContentGuessFalseNames? CurrentContentGuess { get; set; }
-        private Stack<ContentGuessFalseNames> ContentCollection { get; set; } = new Stack<ContentGuessFalseNames>();
+       
         private List<string>? Answers { get; set; } 
         private bool isAnswered { get; set; } = false;
         protected override async Task OnInitializedAsync()
@@ -36,44 +37,31 @@ namespace Web.Client.Pages
             myTimer.Elapsed +=  async(o, e) => { StopPlay = true; if (ContentPlay != null) await ContentPlay.Pause();  
                 myTimer.Stop(); StateHasChanged();
             };
+            GuessContentClient.OnContentEmtpy += async () => await JS.InvokeVoidAsync("alert", "Контент закончился, поменяйте теги");
         }
        
-        
-        private void AddTags(IEnumerable<TagTree> tags)
-        {
-            foreach (var tag in tags)
-            {
-                tag.Children.AddRange(Tags.Where(c => c.ParentId == tag.Tag.Id).Select(t => new TagTree(t)));
-               if(tag.Children.Count > 0)
-                  AddTags(tag.Children);
-            }
-        }
         private async Task GetContent()
         {
             isAnswered = false;
-
             if (CurrentContentGuess != null && ContentPlay != null)
             {
                 await ContentPlay.StopPlay();
                 myTimer.Stop();
             }
-            CurrentContentGuess = null;
+            CurrentContentGuess = await GuessContentClient.GetContent(10);
+            if (CurrentContentGuess == null)
+                return;
             StopPlay = false;
-            if (ContentCollection.Count > 0)
-            {
-               await configureContent( ContentCollection.Pop());
-                if(ContentCollection.Count <3)
-                await LoadContent();
-            }
-            else
-            {
-              await LoadContent();
-              await  configureContent(ContentCollection.Pop());
-            }
-            
-            
+            Answers = new List<string>(CurrentContentGuess.FalseNames);
+            Answers.Add(CurrentContentGuess.Content.Name);
+            Answers = Answers.OrderBy(c => Guid.NewGuid()).ToList();
+            StateHasChanged();
+            if (ContentPlay != null)
+                await ContentPlay.UpdateContent(CurrentContentGuess);
+
+
         }
-        private void TagSelected(TagTree tagTree)
+        private async Task TagSelected(TagTree tagTree)
         {
              var id = tagTree.Tag.Id;
              if (SelectedTags.Contains(id))
@@ -82,14 +70,13 @@ namespace Web.Client.Pages
              }
              else
              {
-            
                 SelectedTags.RemoveAll(t => FindTagsDown(tagTree).Contains(t));
-             if (tagTree.Tag.ParentId.HasValue)
-                SelectedTags.RemoveAll(t => FindTagsUp(tagTree.Tag).Contains(t));
+                if (tagTree.Tag.ParentId.HasValue)
+                    SelectedTags.RemoveAll(t => FindTagsUp(tagTree.Tag).Contains(t));
                 SelectedTags.Add(id);
             }
-             ContentCollection.Clear();
-             StateHasChanged();
+            await GuessContentClient.ChangeTags(SelectedTags);
+            StateHasChanged();
             
         }
         private IEnumerable<int> FindTagsUp(Tag tag)
@@ -119,16 +106,6 @@ namespace Web.Client.Pages
             }
             return tagsIds;
         }
-        private async Task configureContent(ContentGuessFalseNames contentGuess)
-        {
-            Answers = new List<string>(contentGuess.FalseNames);
-            Answers.Add(contentGuess.Content.Name);
-            Answers = Answers.OrderBy(c => Guid.NewGuid()).ToList();
-            if (ContentPlay != null)
-               await ContentPlay.UpdateContent(contentGuess);
-            CurrentContentGuess = contentGuess;
-            StateHasChanged();
-        }
         private async void  CheckAnswer(string answer)
         {
             isAnswered = true;
@@ -136,7 +113,8 @@ namespace Web.Client.Pages
                 await ContentPlay.StartPlay();
             myTimer.Stop();
             AnswerCount++;
-            if (CurrentContentGuess!.Content.Name == answer)
+            bool result = AnswerByNumber ? CheckAnswerByNumber(answer) : CheckAsnwerByName(answer);
+            if (result)
             {
                 CorrectAnswer++;
                 CorrectAsnwerStreak++;
@@ -149,18 +127,18 @@ namespace Web.Client.Pages
                 await JS.InvokeVoidAsync("alert", $"вы ошиблись! Правильный ответ:{CurrentContentGuess!.Content.Name}");
             }
         }
-        private async Task LoadContent()
+        private bool CheckAsnwerByName(string answer) => CurrentContentGuess!.Content.Name == answer;
+        private bool CheckAnswerByNumber(string number)
         {
-           var contentForGuess = await ContentGuessService.GetContentGuess(300, 9, SelectedTags);
-                if (contentForGuess != null)
-                {
-                    foreach (var item in contentForGuess)
-                    {
-                        ContentCollection.Push(item);
-                    }
-                }
+           var res = Regex.Match(CurrentContentGuess!.Content.Name, @"\d+");
+            if (res.Success)
+            {
+               return res.Value == number;
+            }
+            return false;
         }
-      
+
+
         private async Task startTimer()
         {
             if (ContentPlay != null)

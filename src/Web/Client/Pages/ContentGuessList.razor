@@ -11,7 +11,7 @@
     [Inject]
     ContentGuessService contentGuessService { get; set; } = default!;
    
-    List<ContentGuess> Content { get; set; } = new List<ContentGuess>();
+    List<ContentGuessInfo> Content { get; set; } = new List<ContentGuessInfo>();
     protected override async Task OnInitializedAsync()
     {
        Content = await contentGuessService.GetAllContent();

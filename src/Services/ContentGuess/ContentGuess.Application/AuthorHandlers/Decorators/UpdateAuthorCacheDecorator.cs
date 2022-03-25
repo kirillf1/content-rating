@@ -26,6 +26,10 @@ namespace ContentGuess.Application.AuthorHandlers.Decorators
                 var updatedAuthor = authors.Find(a => a.Id == author.Id);
                 if (updatedAuthor != null)
                     updatedAuthor.Name = author.Name;
+                else
+                {
+                    authors.Add(author);
+                }
             }
             return author;
         }

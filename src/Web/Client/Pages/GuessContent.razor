@@ -1,6 +1,8 @@
 ﻿@page "/guesscontent"
+@using Syncfusion.Blazor.DropDowns
 @using Web.Client.Shared.ContentPlay
 @using Web.Client.Shared.TagTrees
+@using Web.Shared.GuessContent
 
 <div class="container">
    
@@ -35,33 +37,50 @@
         </select>
     </div>
     <button  @onclick="GetContent">След</button>
+    <input class="form-check-input" type="checkbox" @bind-value="@AnswerByNumber" name="flexRadioDefault" id="flexRadioDefault1">
+    <label class="form-check-label" for="flexRadioDefault1">
+        По номеру Опенинга
+    </label>
     @if (CurrentContentGuess != null)
     {
             
-        @if (Answers != null && !isAnswered)
+        @if (Answers != null && !isAnswered )
         {
-            <p>Выберете правильный ответ:</p>
-            <table class="pb-5 table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">№</th>
-                   <th scope="col">Вариант ответа</th>
-               </tr>
-               </thead>
-               <tbody>
-            @foreach(var answerWithNumber in Answers.Select((a,n)=> new {answer =a, number =n} ))
+            @if (!AnswerByNumber)
             {
-                <tr>
-                  <td @onclick="()=>CheckAnswer(answerWithNumber.answer)" scope="row">@(answerWithNumber.number+1)</td>
-                  
-                 <td @onclick="()=>CheckAnswer(answerWithNumber.answer)"  scope="row">@answerWithNumber.answer</td>
-               </tr>
-               
-               
+                <p>Выберете правильный ответ:</p>
+                <table class="pb-5 table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">№</th>
+                            <th scope="col">Вариант ответа</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var answerWithNumber in Answers.Select((a, n) => new { answer = a, number = n }))
+                        {
+                            <tr>
+                                <td @onclick="()=>CheckAnswer(answerWithNumber.answer)" scope="row">@(answerWithNumber.number+1)</td>
+
+                                <td @onclick="()=>CheckAnswer(answerWithNumber.answer)"  scope="row">@answerWithNumber.answer</td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
             }
-            </tbody>
-            </table>
+            else
+            {
+               <div class="d-flex justify-content-center">
+                   <SfAutoComplete TValue="string" TItem="Tag" Placeholder="e.g. Australia" DataSource="Tags">
+                      <AutoCompleteFieldSettings Value="Name" />
+                   </SfAutoComplete>
+                 @*  <input @bind-value="AnswerNumber"/>
+                   <button @onclick="()=>CheckAnswer(AnswerNumber)">Подтвердить</button>*@
+               </div> 
+            }
         }
+       
         @switch (CurrentContentGuess.Content.ContentType)
         {
             case "YoutubeVideo":

@@ -31,7 +31,7 @@ namespace ContentGuess.Infrastructure.Data
 
             modelBuilder.Entity<ContentInfo>().HasOne(c => c.Author);
 
-            modelBuilder.Entity<Tag>().HasKey(prop => prop.Id);
+            modelBuilder.Entity<Tag>().HasKey(prop => prop.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Tag>().HasMany(t => t.ChildTags).WithOne(t => t.ParentTag).HasForeignKey(t => t.ParentTagId);
 
             modelBuilder.HasPostgresExtension("uuid-ossp");

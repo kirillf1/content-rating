@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.JSInterop;
+using Syncfusion.Blazor;
 using Web.Client;
 using Web.Client.Http;
 using Web.Shared;
@@ -43,6 +44,11 @@ builder.Services.AddTransient<ContentTypeService>(s =>
     var client = s.GetRequiredService<IHttpClientFactory>().CreateClient("contentGuessApi");
     return new ContentTypeService(client);
 });
+builder.Services.AddScoped<GuessContentClient>(s =>
+{
+    var client = s.GetRequiredService<IHttpClientFactory>().CreateClient("contentGuessApi");
+    return new GuessContentClient(client);
+});
 var configuration = builder.Configuration;
 builder.Services.AddHttpClient("contentGuessApi", s => { s.BaseAddress = new Uri(configuration.GetSection("Urls").GetSection("ContentGuessApi").Value); });
 builder.Services.AddHttpClient("api", s => { s.BaseAddress = new Uri(configuration.GetSection("Urls").GetSection("ApiAddress").Value); } ).AddHttpMessageHandler<CookieHttpClientHandler>();
@@ -54,4 +60,6 @@ builder.Services.AddScoped<RatingClientHub>(s => { return new RatingClientHub(co
 builder.Services.AddScoped<RoomListClientHub>(s => { return new RoomListClientHub(configuration.GetSection("Urls").GetSection("RoomListHub").Value); });
 builder.Services.AddSingleton<State>();
 builder.Services.AddScoped<PlaylistService>();
+
+builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
 await builder.Build().RunAsync();
