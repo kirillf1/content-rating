@@ -1,40 +1,41 @@
 ﻿@page "/RatingRoom/{id}"
 <div class="container">
-@if (Room != null)
-{
-    @if (Content.Count > 0)
+    @if (Room != null)
     {
-        
-        <div class="pt-5 sticky-top d-flex  justify-content-end">
-           <button type="button" @onclick="()=>MenuOpened =!MenuOpened" class="btn btn-default btn-outline-secondary sticky-top" >
-           <span class="oi oi-cog" aria-hidden="true"></span></button>
-          
-           @if(MenuOpened)
-           {
-               <div class="d-flex flex-column">
-                   <button @onclick="ShowProgress">Промежуточные итоги</button>
-                @if(Room.CreatorId == State.User!.Id)
-                {
-                    <i class="pb-2">Выгнать игроков:</i>
-                    @foreach(var user in Room.Users.Where(c=>c.Id !=Room.CreatorId))
-                    {
-                        <button @onclick="()=>KickUser(user)">Выгнать @user.Name</button>
-                    }
-                    <button @onclick="EndEstimate">Подвести итоги</button>
-                }
-                else
-                {
-                <button @onclick="LeaveRoom">Выйти из комнаты</button>
-                }
-                </div>
-           }
-        </div>
-        <ContentList Users=@Room.Users Content=Content ContentEstimated="ChangeRating"></ContentList>
+        @if (Content.Count > 0)
+        {
 
+            <div class="pt-5 sticky-top d-flex  justify-content-end">
+                <button type="button" @onclick="()=>MenuOpened =!MenuOpened" class="btn btn-default btn-outline-secondary sticky-top">
+                    <span class="oi oi-cog" aria-hidden="true"></span>
+                </button>
+
+                @if (MenuOpened)
+                {
+                    <div class="d-flex flex-column">
+                        <button @onclick="ShowProgress">Промежуточные итоги</button>
+                        @if (Room.CreatorId == State.User!.Id)
+                        {
+                            <i class="pb-2">Выгнать игроков:</i>
+                            @foreach (var user in Room.Users.Where(c => c.Id != Room.CreatorId))
+                            {
+                                <button @onclick="()=>KickUser(user)">Выгнать @user.Name</button>
+                            }
+                            <button @onclick="EndEstimate">Подвести итоги</button>
+                        }
+                        else
+                        {
+                            <button @onclick="LeaveRoom">Выйти из комнаты</button>
+                        }
+                    </div>
+                }
+            </div>
+            <ContentList Users=@Room.Users Content=Content ContentEstimated="ChangeRating"></ContentList>
+
+        }
+        else
+        {
+            <h1>Идет загрузка оценок</h1>
+        }
     }
-    else
-    {
-         <h1>Идет загрузка оценок</h1>
-    }
-}
 </div>

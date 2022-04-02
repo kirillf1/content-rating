@@ -3,11 +3,11 @@
 @using Web.Shared.GuessContent
 @using Youtube.Extensions.Services
 <div class="container">
-    @if(Id == 0)
+    @if (Id == 0)
     {
-        <YoutubeVideoLoader VideoLoaded=YoutubeVideoLoaded ></YoutubeVideoLoader>
+        <YoutubeVideoLoader VideoLoaded=YoutubeVideoLoaded></YoutubeVideoLoader>
     }
-    
+
     @if (AuthorInputOpened)
     {
         <label>Введите имя автора</label>
@@ -17,33 +17,34 @@
     <button class="py-3" @onclick="()=> {AuthorInputOpened = !AuthorInputOpened; AuthorInputName=string.Empty;} "> Добавить автора</button>
     <div class="row">
 
-    <div class="col">
-        @foreach (var item in content)
-       {
-           <div class="py-5">
-           <ContentGuessInput Content="item" Tags="Tags" Authors="Authors" ContentTypes="ContentTypes" ContentRemoved="RemoveContent"></ContentGuessInput>
-           </div>
-       }
-    </div>
-    @if(Id == 0 && Tags!= null){
-    <div class="col-1 justify-content-start">
-        <button @onclick="AddContent">Добавить</button>
-        <label>Глобальный теги</label>
-        <select @onchange="GlobalTagSelected">
+        <div class="col">
+            @foreach (var item in content)
+            {
+                <div class="py-5">
+                    <ContentGuessInput Content="item" Tags="Tags" Authors="Authors" ContentTypes="ContentTypes" ContentRemoved="RemoveContent"></ContentGuessInput>
+                </div>
+            }
+        </div>
+        @if (Id == 0 && Tags != null)
+        {
+            <div class="col-1 justify-content-start">
+                <button @onclick="AddContent">Добавить</button>
+                <label>Глобальный теги</label>
+                <select @onchange="GlobalTagSelected">
                     @if (GlobalTagIds.Count == 0)
                     {
                         <option selected>Выбор...</option>
                     }
-                @foreach(var tag in Tags)
-                {
-                    <option value="@tag.Id">@tag.Name</option>
-                }
-         </select>
+                    @foreach (var tag in Tags)
+                    {
+                        <option value="@tag.Id">@tag.Name</option>
+                    }
+                </select>
+            </div>
+
+        }
     </div>
-   
-    }
-</div>
-<button @onclick="Save">Сохранить</button>
+    <button @onclick="Save">Сохранить</button>
 </div>
 @code {
     [Parameter]
@@ -85,16 +86,17 @@
     }
     private void AddContent()
     {
-        content.Add(new ContentGuessEdit() {TagIds = GlobalTagIds});
+        content.Add(new ContentGuessEdit() { TagIds = GlobalTagIds });
     }
     private List<ContentGuessEdit> content { get; set; } = new();
-    private  async Task Save()
+    private async Task Save()
     {
         bool result = false;
-        if(Id > 0){
+        if (Id > 0)
+        {
             var contentForUpdate = content.FirstOrDefault();
             if (contentForUpdate != null)
-                result = await contentService.UpdateContentGuess(contentForUpdate,Id);
+                result = await contentService.UpdateContentGuess(contentForUpdate, Id);
         }
         else
         {
@@ -120,7 +122,7 @@
     }
     private void YoutubeVideoLoaded(IEnumerable<Video> videos)
     {
-        foreach(var video in videos)
+        foreach (var video in videos)
         {
             content.Add(new ContentGuessEdit() { Name = video.Name ?? string.Empty, Url = "https://www.youtube.com/embed/" + video.Id, TagIds = new List<int>(GlobalTagIds) });
         }
@@ -133,6 +135,6 @@
         if (author != null)
             Authors.Add(author);
         AuthorInputOpened = false;
-        
+
     }
 }
