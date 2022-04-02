@@ -1,19 +1,20 @@
 ﻿@page "/ContentGuessList"
 @using Web.Shared.GuessContent
 <h3>ContentGuessList</h3>
-@foreach(var content in Content)
+@foreach (var content in Content)
 {
     <p>
-    <a href="/ContentGuessUpdate/@content.Id">@content.Name</a></p>
-    
+        <a href="/ContentGuessUpdate/@content.Id">@content.Name</a>
+    </p>
+
 }
 @code {
     [Inject]
     ContentGuessService contentGuessService { get; set; } = default!;
-   
+
     List<ContentGuessInfo> Content { get; set; } = new List<ContentGuessInfo>();
     protected override async Task OnInitializedAsync()
     {
-       Content = await contentGuessService.GetAllContent();
+        Content = await contentGuessService.GetAllContent();
     }
 }

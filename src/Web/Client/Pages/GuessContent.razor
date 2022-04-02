@@ -5,23 +5,23 @@
 @using Web.Shared.GuessContent
 
 <div class="container">
-   
-           
-      @if(Tags.Count > 0)
-        {
-  <div class="row py-5">
-      <div class="col">
-          <TagTreeList Tags="Tags" TagSelected="TagSelected"></TagTreeList>
+
+
+    @if (Tags.Count > 0)
+    {
+        <div class="row py-5">
+            <div class="col">
+                <TagTreeList Tags="Tags" TagSelected="TagSelected"></TagTreeList>
+            </div>
+            <div class="col">
+                <p>Выбранные теги:</p>
+                <span>
+                    @string.Join(",",Tags.Where(t=>SelectedTags.Contains(t.Id)).Select(c=>c.Name))
+
+                </span>
+            </div>
         </div>
-      <div class="col">
-          <p>Выбранные теги:</p>
-          <span>
-          @string.Join(",",Tags.Where(t=>SelectedTags.Contains(t.Id)).Select(c=>c.Name))
-        
-          </span>
-      </div>
-    </div>
-       }
+    }
     <div class="py-3">
         <span>Правильных ответов:@CorrectAnswer</span>
         <span>Серия угадываний: @CorrectAsnwerStreak</span>
@@ -36,15 +36,15 @@
             <option value="3">3 секунды</option>
         </select>
     </div>
-    <button  @onclick="GetContent">След</button>
+    <button @onclick="GetContent">След</button>
     <input class="form-check-input" type="checkbox" @bind-value="@AnswerByNumber" name="flexRadioDefault" id="flexRadioDefault1">
     <label class="form-check-label" for="flexRadioDefault1">
         По номеру Опенинга
     </label>
     @if (CurrentContentGuess != null)
     {
-            
-        @if (Answers != null && !isAnswered )
+
+        @if (Answers != null && !isAnswered)
         {
             @if (!AnswerByNumber)
             {
@@ -62,7 +62,7 @@
                             <tr>
                                 <td @onclick="()=>CheckAnswer(answerWithNumber.answer)" scope="row">@(answerWithNumber.number+1)</td>
 
-                                <td @onclick="()=>CheckAnswer(answerWithNumber.answer)"  scope="row">@answerWithNumber.answer</td>
+                                <td @onclick="()=>CheckAnswer(answerWithNumber.answer)" scope="row">@answerWithNumber.answer</td>
                             </tr>
 
                         }
@@ -71,23 +71,23 @@
             }
             else
             {
-               <div class="d-flex justify-content-center">
-                   <SfAutoComplete TValue="string" TItem="Tag" Placeholder="e.g. Australia" DataSource="Tags">
-                      <AutoCompleteFieldSettings Value="Name" />
-                   </SfAutoComplete>
-                 @*  <input @bind-value="AnswerNumber"/>
-                   <button @onclick="()=>CheckAnswer(AnswerNumber)">Подтвердить</button>*@
-               </div> 
+                <div class="d-flex justify-content-center">
+                    <SfAutoComplete TValue="string" TItem="Tag" Placeholder="e.g. Australia" DataSource="Tags">
+                        <AutoCompleteFieldSettings Value="Name" />
+                    </SfAutoComplete>
+                    @*  <input @bind-value="AnswerNumber"/>
+                        <button @onclick="()=>CheckAnswer(AnswerNumber)">Подтвердить</button>*@
+                </div>
             }
         }
-       
+
         @switch (CurrentContentGuess.Content.ContentType)
         {
             case "YoutubeVideo":
                 <YoutubePlay ContentLoaded="startTimer" PlayerStoped="StopPlay" IsAnswered="isAnswered" CurrentContentGuess="CurrentContentGuess" @ref="ContentPlay"></YoutubePlay>
                 break;
             case "Audio":
-                <AudioPlay ContentLoaded="startTimer" IsAnswered="isAnswered"  @ref="ContentPlay"></AudioPlay>
+                <AudioPlay ContentLoaded="startTimer" IsAnswered="isAnswered" @ref="ContentPlay"></AudioPlay>
                 break;
         }
     }

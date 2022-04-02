@@ -7,7 +7,7 @@
         {
             <h3>Правильный ответ: @CurrentContentGuess.Content.Name</h3>
         }
-        <audio hidden="hidden" autoplay  class="Audio"  preload="none" @onplay="async ()=>await ContentLoaded.InvokeAsync()">
+        <audio hidden="hidden" autoplay class="Audio" preload="none" @onplay="async ()=>await ContentLoaded.InvokeAsync()">
             <source src="@CurrentContentGuess.Content.Url">
         </audio>
     </div>
